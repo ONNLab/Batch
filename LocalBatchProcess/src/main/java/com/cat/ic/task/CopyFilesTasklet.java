@@ -35,7 +35,7 @@ public class CopyFilesTasklet implements Tasklet, InitializingBean {
 
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; i++) {
-			log.info("copy files " + files[i].getName() );
+			log.info("copy files " + files[i].getName() + " to " + dstDir);
 			try {
 				FileUtils.copyFile(files[i], new File(dstDir+"/"+files[i].getName()));
 			} catch (Exception e) {
