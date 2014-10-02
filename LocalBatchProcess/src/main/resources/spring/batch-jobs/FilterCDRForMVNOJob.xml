@@ -11,8 +11,8 @@
 
 	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch">
 		<step id="prepareCDR" >
-			<tasklet ref="copyFilesTasklet"></tasklet>
-			<next on="COMPLETE" to="step-Master"/>
+			<tasklet ref="copyFilesTasklet"/>
+			<next on="COMPLETED" to="step-Master"/>
 		</step>
 		<step id="step-Master"  >
 			<partition step="step1-Slave-Process" partitioner="partitioner">
