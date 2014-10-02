@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!-- stored job-meta in memory -->
+	<!-- <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"> 
+		<property name="transactionManager" ref="transactionManager" /> </bean> -->
+
+	<!-- stored job-meta in database -->
+	<bean id="jobRepository"
+		class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="databaseType" value="ORACLE" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+	<bean id="jobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+	</bean>
+
+<!-- 		The following bean use when run with command line batch job -->
+<!-- 	<bean class="org.springframework.batch.core.configuration.support.AutomaticJobRegistrar"> -->
+<!-- 		<property name="applicationContextFactories"> -->
+<!-- 			<bean -->
+<!-- 				class="org.springframework.batch.core.configuration.support.ClasspathXmlApplicationContextsFactoryBean"> -->
+<!-- 				<property name="resources" value="classpath*:/spring/batch-jobs/ExtractCDRMVNOJob.xml" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 		<property name="jobLoader"> -->
+<!-- 			<bean -->
+<!-- 				class="org.springframework.batch.core.configuration.support.DefaultJobLoader"> -->
+<!-- 				<property name="jobRegistry" ref="jobRegistry" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
+</beans>

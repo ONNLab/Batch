@@ -1,0 +1,73 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+		http://www.springframework.org/schema/context
+      	http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:property-placeholder
+		location="classpath:/spring/config/batch.properties" />
+
+<!-- 	<bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource" -->
+<!-- 		destroy-method="close"> -->
+<!-- 		<property name="connectionCachingEnabled" value="true" /> -->
+<!-- 		<property name="URL" value="${jdbc.URL}" /> -->
+<!-- 		<property name="password" value="${jdbc.password}" /> -->
+<!-- 		<property name="user" value="${jdbc.user}" /> -->
+<!-- 		<property name="connectionCacheProperties"> -->
+<!-- 			<props merge="default"> -->
+<!-- 				<prop key="MinLimit">${jdbc.connectionMinLimit}</prop> -->
+<!-- 				<prop key="MaxLimit">${jdbc.connectionMaxLimit}</prop> -->
+<!-- 			</props> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
+	<bean id="dataSource" class="oracle.ucp.jdbc.PoolDataSourceFactory"
+		factory-method="getPoolDataSource">
+		<property name="URL" value="${jdbc.URL}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="connectionFactoryClassName" value="oracle.jdbc.pool.OracleDataSource" />
+		<property name="connectionPoolName" value="LOCALIC_POOL" />
+		<property name="minPoolSize" value="${jdbc.connectionMinLimit}" />
+		<property name="maxPoolSize" value="${jdbc.connectionMaxLimit}" />
+		<property name="initialPoolSize" value="${jdbc.connectionMinLimit}" />
+		<property name="inactiveConnectionTimeout" value="120" />
+		<property name="validateConnectionOnBorrow" value="true" />
+	</bean>
+	
+<!-- 	<bean id="dataSource" class="oracle.ucp.jdbc.PoolDataSourceFactory" factory-method="getPoolDataSource">   -->
+<!--       <property name="URL" value="jdbc:oracle:thin:@beast.au.oracle.com:1524/linux11gr2" />   -->
+<!--       <property name="user" value="scott" />   -->
+<!--       <property name="password" value="tiger" />   -->
+<!--       <property name="connectionFactoryClassName" value="oracle.jdbc.pool.OracleDataSource" />   -->
+<!--       <property name="connectionPoolName" value="TEST_POOL" />   -->
+<!--       <property name="minPoolSize" value="1" />   -->
+<!--       <property name="maxPoolSize" value="10" />   -->
+<!--       <property name="initialPoolSize" value="1" />   -->
+<!--     </bean>   -->
+
+	
+	 <!-- BoneCP configuration --> 
+<!-- <bean id="mainDataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close"> -->
+<!--    <property name="driverClass" value="com.mysql.jdbc.Driver" /> -->
+<!--    <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1/yourdb" /> -->
+<!--    <property name="username" value="root"/> -->
+<!--    <property name="password" value="abcdefgh"/> -->
+<!--    <property name="idleConnectionTestPeriod" value="60"/> -->
+<!--    <property name="idleMaxAge" value="240"/> -->
+<!--    <property name="maxConnectionsPerPartition" value="30"/> -->
+<!--    <property name="minConnectionsPerPartition" value="10"/> -->
+<!--    <property name="partitionCount" value="3"/> -->
+<!--    <property name="acquireIncrement" value="5"/> -->
+<!--    <property name="statementsCacheSize" value="100"/> -->
+<!--    <property name="releaseHelperThreads" value="3"/> -->
+<!-- </bean> -->
+
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+</beans>
