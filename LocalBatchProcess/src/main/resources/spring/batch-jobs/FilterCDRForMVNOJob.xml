@@ -9,20 +9,25 @@
 	<import resource="../config/database.xml" />
 	<import resource="../config/cacheManager.xml" />
 
-	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch">
+	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch" restartable="true">
 		<step id="prepareCDR" >
 			<tasklet ref="copyFilesTasklet"/>
 			<next on="COMPLETED" to="step-Master"/>
 		</step>
-		<step id="step-Master"  >
-			<partition step="step1-Slave-Process" partitioner="partitioner">
+		<step id="step-Master" allow-start-if-complete="true">
+			<partition step="step1-Slave-Process" partitioner="partitioner" >
 				<handler grid-size="${partition.grid-size}" task-executor="taskExecutor" />
 			</partition>
 		</step>
+		<listeners>
+			<listener ref="jobListener"/>
+		</listeners>
 	</job>
 
+	<bean id="jobListener" class="com.cat.ic.listener.impl.JobListener"/>
+	
 	<bean id="partitioner"
-		class="org.springframework.batch.core.partition.support.MultiResourcePartitioner">
+		class="org.springframework.batch.core.partition.support.MultiResourcePartitioner" >
 		<property name="resources" value="${jobs.mvno.resources.input_path}" />
 	</bean>
 
