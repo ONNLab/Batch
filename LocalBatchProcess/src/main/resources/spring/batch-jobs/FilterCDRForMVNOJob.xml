@@ -9,25 +9,26 @@
 	<import resource="../config/database.xml" />
 	<import resource="../config/cacheManager.xml" />
 
-	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch" restartable="true">
-<!-- 		<step id="prepareCDR" > -->
-<!-- 			<tasklet ref="copyFilesTasklet"/> -->
-<!-- 			<next on="COMPLETED" to="step-Master"/> -->
-<!-- 		</step> -->
-		<step id="step-Master" allow-start-if-complete="true">
-			<partition step="step1-Slave-Process" partitioner="partitioner" >
+	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch"
+		restartable="true">
+		<!-- <step id="prepareCDR" > -->
+		<!-- <tasklet ref="copyFilesTasklet"/> -->
+		<!-- <next on="COMPLETED" to="step-Master"/> -->
+		<!-- </step> -->
+		<step id="step-Master-of-filterCDRForMVNO" allow-start-if-complete="true">
+			<partition step="step-Slave-filterCDRForMVNO" partitioner="partitioner">
 				<handler grid-size="${partition.grid-size}" task-executor="taskExecutor" />
 			</partition>
 		</step>
 		<listeners>
-			<listener ref="jobListener"/>
+			<listener ref="jobListener" />
 		</listeners>
 	</job>
 
-	<bean id="jobListener" class="com.cat.ic.listener.impl.JobListener"/>
-	
+	<bean id="jobListener" class="com.cat.ic.listener.impl.JobListener" />
+
 	<bean id="partitioner"
-		class="org.springframework.batch.core.partition.support.MultiResourcePartitioner" >
+		class="org.springframework.batch.core.partition.support.MultiResourcePartitioner">
 		<property name="resources" value="${jobs.mvno.resources.input_path}" />
 	</bean>
 
@@ -37,11 +38,15 @@
 	<bean id="taskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="${taskExecutor.corePoolSize}" />
-<!-- 		<property name="maxPoolSize" value="${taskExecutor.maxPoolSize}" /> -->
-<!-- 		<property name="queueCapacity" value="${taskExecutor.queueCapacity}" /> -->
+		<!-- maxPoolSize = numberOfCPUs - 8 -->
+		<property name="maxPoolSize" value="${taskExecutor.maxPoolSize}" />
+		<property name="queueCapacity" value="${taskExecutor.queueCapacity}" />
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
 	</bean>
 
-	<step id="step1-Slave-Process" xmlns="http://www.springframework.org/schema/batch" >
+	<step id="step-Slave-filterCDRForMVNO" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet transaction-manager="transactionManager">
 			<chunk writer="itemWriter" reader="itemReader" processor="itemProcessor"
 				commit-interval="${chunk.commit-interval}" retry-policy="retryPolicy" />
@@ -49,12 +54,12 @@
 				<listener ref="fileNameListener" />
 				<listener ref="chunkListener" />
 				<listener ref="retryListener" />
-				<listener ref="stepListener"/>
+				<listener ref="stepListener" />
 			</listeners>
 		</tasklet>
 	</step>
-	
-	<bean id="stepListener" class="com.cat.ic.listener.impl.StepListener"/>
+
+	<bean id="stepListener" class="com.cat.ic.listener.impl.StepListener" />
 
 	<bean id="retryListener" class="com.cat.ic.listener.impl.BatchRetryListener" />
 
@@ -145,7 +150,7 @@
 			</bean>
 		</property>
 	</bean>
-	
+
 	<bean id="copyFilesTasklet" class="com.cat.ic.task.CopyFilesTasklet">
 		<property name="srcDir" value="${jobs.mvno.resources.src_path}" />
 		<property name="dstDir" value="${jobs.mvno.resources.dst_path}" />
