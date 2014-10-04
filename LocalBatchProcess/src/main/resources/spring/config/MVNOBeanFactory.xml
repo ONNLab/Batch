@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<import resource="../config/database.xml" />
+	
+	<bean id="jobListener" class="com.cat.ic.listener.impl.JobListener" />
+
+	<bean id="partitioner"
+		class="org.springframework.batch.core.partition.support.MultiResourcePartitioner">
+		<property name="resources" value="${jobs.mvno.resources.input_path}" />
+	</bean>
+	
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${taskExecutor.corePoolSize}" />
+		<!-- maxPoolSize = numberOfCPUs - 8 -->
+		<property name="maxPoolSize" value="${taskExecutor.maxPoolSize}" />
+		<property name="queueCapacity" value="${taskExecutor.queueCapacity}" />
+		<property name="rejectedExecutionHandler">
+			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
+		</property>
+	</bean>
+	
+	<bean id="stepListener" class="com.cat.ic.listener.impl.StepListener" />
+
+	<bean id="retryListener" class="com.cat.ic.listener.impl.BatchRetryListener" />
+
+
+
+	<bean id="chunkListener" class="com.cat.ic.listener.impl.ChunkProcessListenerImpl"
+		scope="step" />
+
+	<bean id="fileNameListener" class="com.cat.ic.listener.impl.OutputFileListenerMVNO"
+		scope="step">
+		<property name="path" value="${jobs.mvno.resources.output_path}" />
+	</bean>
+
+	<bean id="itemReader" scope="step" autowire-candidate="false"
+		parent="itemReaderParent">
+		<property name="resource" value="#{stepExecutionContext[fileName]}" />
+	</bean>
+
+	<bean id="itemReaderParent" class="org.springframework.batch.item.file.FlatFileItemReader"
+		abstract="true">
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter" value="," />
+						<property name="names"
+							value="cdr_date, cdr_time, cdr_duration, cdr_in_route, cdr_out_route, cdr_a_no, cdr_b_no, cdr_bearer_service, cdr_extra9, cdr_extra10, cdr_extra11, cdr_extra12, cdr_extra13, cdr_extra14, cdr_extra15, cdr_extra16, cdr_extra17, cdr_extra18, cdr_extra19" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean
+						class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+						<property name="targetType" value="com.cat.ic.model.CDR" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="routeDAO" class="com.cat.ic.dao.impl.RouteDAOImplJDBC">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<bean id="elementDAO" class="com.cat.ic.dao.impl.ElementDAOImplJDBC">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="routeService" class="com.cat.ic.service.impl.RouteServiceImpl">
+		<property name="routeDAO" ref="routeDAO" />
+	</bean>
+
+	<bean id="elementService" class="com.cat.ic.service.impl.ElementServiceImpl">
+		<property name="elementDAO" ref="elementDAO" />
+	</bean>
+
+	<bean id="itemProcessor" class="com.cat.ic.process.CDRItemProcessor">
+		<property name="routeService" ref="routeService" />
+		<property name="elementService" ref="elementService" />
+	</bean>
+
+	<bean id="itemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter"
+		scope="step">
+		<property name="resource" value="#{stepExecutionContext[outputFile]}" />
+		<property name="lineAggregator">
+			<bean
+				class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="delimiter" value="|" />
+				<property name="fieldExtractor">
+					<bean
+						class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+						<property name="names"
+							value="cdr_date, cdr_time, cdr_duration, cdr_in_route, cdr_out_route, cdr_a_no, cdr_b_no, cdr_bearer_service, cdr_extra9, cdr_extra10, cdr_extra11, cdr_extra12, cdr_extra13, cdr_extra14, cdr_extra15, cdr_extra16, cdr_extra17, cdr_extra18, cdr_extra19,cdr_mvno_name" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="copyFilesTasklet" class="com.cat.ic.task.CopyFilesTasklet">
+		<property name="srcDir" value="${jobs.mvno.resources.src_path}" />
+		<property name="dstDir" value="${jobs.mvno.resources.dst_path}" />
+	</bean>
+</beans>
