@@ -10,10 +10,10 @@
 	<import resource="../config/cacheManager.xml" />
 
 	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch" restartable="true">
-		<step id="prepareCDR" >
-			<tasklet ref="copyFilesTasklet"/>
-			<next on="COMPLETED" to="step-Master"/>
-		</step>
+<!-- 		<step id="prepareCDR" > -->
+<!-- 			<tasklet ref="copyFilesTasklet"/> -->
+<!-- 			<next on="COMPLETED" to="step-Master"/> -->
+<!-- 		</step> -->
 		<step id="step-Master" allow-start-if-complete="true">
 			<partition step="step1-Slave-Process" partitioner="partitioner" >
 				<handler grid-size="${partition.grid-size}" task-executor="taskExecutor" />
@@ -37,8 +37,8 @@
 	<bean id="taskExecutor"
 		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="${taskExecutor.corePoolSize}" />
-		<property name="maxPoolSize" value="${taskExecutor.maxPoolSize}" />
-		<property name="queueCapacity" value="${taskExecutor.queueCapacity}" />
+<!-- 		<property name="maxPoolSize" value="${taskExecutor.maxPoolSize}" /> -->
+<!-- 		<property name="queueCapacity" value="${taskExecutor.queueCapacity}" /> -->
 	</bean>
 
 	<step id="step1-Slave-Process" xmlns="http://www.springframework.org/schema/batch" >
@@ -49,9 +49,12 @@
 				<listener ref="fileNameListener" />
 				<listener ref="chunkListener" />
 				<listener ref="retryListener" />
+				<listener ref="stepListener"/>
 			</listeners>
 		</tasklet>
 	</step>
+	
+	<bean id="stepListener" class="com.cat.ic.listener.impl.StepListener"/>
 
 	<bean id="retryListener" class="com.cat.ic.listener.impl.BatchRetryListener" />
 
