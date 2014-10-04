@@ -112,10 +112,10 @@ public class CDRItemProcessor implements ItemProcessor<CDR, CDR> {
 			if (source1.contains("RMV") || source2.contains("RMV")) {
 				mvno_name = "RMV";
 			} else
-				mvno_name = null;
+				mvno_name = "CASE1 cdrANoGroup=["+cdrANoGroup+"] cdrBnoGroup=["+cdrBnoGroup+"] source1=["+source1+"] source2=["+source2+"]";
 
 		} else {
-			mvno_name = null;
+			mvno_name = "CASE2 cdrANoGroup=["+cdrANoGroup+"] cdrBnoGroup=["+cdrBnoGroup+"] source1=["+source1+"] source2=["+source2+"]";;
 		}
 		log.debug("MVNO NAME: ["+ mvno_name +"]");
 		return mvno_name;
@@ -155,6 +155,7 @@ public class CDRItemProcessor implements ItemProcessor<CDR, CDR> {
 			service = "MMS";
 		} else
 			service = "VOI";
+		log.debug("ORIGINAL SERVICE=" + cdr_bearer_service + " NEW SERVICE="+service);
 		return service;
 	}
 
