@@ -36,64 +36,73 @@ public class CDRItemProcessor implements ItemProcessor<CDR, CDR> {
 		CDR cdr = new CDR();
 		log.debug(item.toString());
 
-		String cdrDate = item.getCdr_date();
-		String cdrTime = item.getCdr_time();
-		String cdrDuration = item.getCdr_duration();
+		if (item.getCdr_bearer_service().contains("VOI")
+				|| item.getCdr_bearer_service().contains("SMS")
+				|| item.getCdr_bearer_service().contains("MMS")) {
+			String cdrDate = item.getCdr_date();
+			String cdrTime = item.getCdr_time();
+			String cdrDuration = item.getCdr_duration();
 
-		Route inRoute = mapRoute(item.getCdr_in_route(), cdrDate);
-		String cdrInRoute = inRoute.getRugName(); // INROUTE OPERATOR
-		String cdrInRouteDesc = inRoute.getEtgDesc();
+			Route inRoute = mapRoute(item.getCdr_in_route(), cdrDate);
+			String cdrInRoute = inRoute.getRugName(); // INROUTE OPERATOR
+			String cdrInRouteDesc = inRoute.getEtgDesc();
 
-		Route outRoute = mapRoute(item.getCdr_out_route(), cdrDate); // OUTROUTE
-																		// OPERATOR
-		String cdrOutRoute = outRoute.getRugName();
-		String cdrOutRouteDesc = outRoute.getEtgDesc();
+			Route outRoute = mapRoute(item.getCdr_out_route(), cdrDate); // OUTROUTE
+																			// OPERATOR
+			String cdrOutRoute = outRoute.getRugName();
+			String cdrOutRouteDesc = outRoute.getEtgDesc();
 
-		List<String> Ano = mapNumber(item.getCdr_a_no(), cdrDate);
-		List<String> Bno = mapNumber(item.getCdr_b_no(), cdrDate);
+			List<String> Ano = mapNumber(item.getCdr_a_no(), cdrDate);
+			List<String> Bno = mapNumber(item.getCdr_b_no(), cdrDate);
 
-		String cdrANo = item.getCdr_a_no();
-		String cdrANoGroup = Ano.get(1); // ANO GROUP NAME
-		String cdrBNo = item.getCdr_b_no(); // BNO GROUP NAME
-		String cdrBnoGroup = Bno.get(1);
-		String cdrBearerService = mapService(item.getCdr_bearer_service());
-		String cdrExtra9 = mapTrafficType(cdrInRouteDesc, cdrOutRouteDesc);
-		String cdrExtra12 = Ano.get(0); // ANO OPERATOR NAME
-		String cdrExtra13 = Bno.get(0); // BNO OPERATOR NAME
-		String cdrExtra14 = item.getCdr_in_route();
-		String cdrExtra15 = item.getCdr_out_route();
-		String cdrExtra17 = item.getCdr_extra17();
-		String cdrExtra18 = item.getCdr_duration();
-		String cdr_mvno_name = map_mvno(cdrANoGroup, cdrInRouteDesc,
-				cdrOutRouteDesc, cdrBnoGroup, Ano.get(0), Bno.get(0),
-				item.getCdr_extra9(), item.getCdr_extra19());
+			String cdrANo = item.getCdr_a_no();
+			String cdrANoGroup = Ano.get(1); // ANO GROUP NAME
+			String cdrBNo = item.getCdr_b_no(); // BNO GROUP NAME
+			String cdrBnoGroup = Bno.get(1);
+			String cdrBearerService = mapService(item.getCdr_bearer_service());
+			String cdrExtra9 = mapTrafficType(cdrInRouteDesc, cdrOutRouteDesc);
+			String cdrExtra12 = Ano.get(0); // ANO OPERATOR NAME
+			String cdrExtra13 = Bno.get(0); // BNO OPERATOR NAME
+			String cdrExtra14 = item.getCdr_in_route();
+			String cdrExtra15 = item.getCdr_out_route();
+			String cdrExtra17 = item.getCdr_extra17();
+			String cdrExtra18 = item.getCdr_duration();
+			String cdr_mvno_name = map_mvno(cdrANoGroup, cdrInRouteDesc,
+					cdrOutRouteDesc, cdrBnoGroup, Ano.get(0), Bno.get(0),
+					item.getCdr_extra9(), item.getCdr_extra19());
 
-		if (cdr_mvno_name != null) {
+			if (cdr_mvno_name != null) {
 
-			cdr.setCdr_date(cdrDate);
-			cdr.setCdr_time(cdrTime);
-			cdr.setCdr_duration(cdrDuration);
-			cdr.setCdr_in_route(cdrInRoute);
-			cdr.setCdr_out_route(cdrOutRoute);
-			cdr.setCdr_a_no(cdrANo);
-			cdr.setCdr_b_no(cdrBNo);
-			cdr.setCdr_bearer_service(cdrBearerService);
-			cdr.setCdr_extra9(cdrExtra9);
-			cdr.setCdr_extra10(" ");
-			cdr.setCdr_extra11(" ");
-			cdr.setCdr_extra12(cdrExtra12);
-			cdr.setCdr_extra13(cdrExtra13);
-			cdr.setCdr_extra14(cdrExtra14);
-			cdr.setCdr_extra15(cdrExtra15);
-			cdr.setCdr_extra16(" ");
-			cdr.setCdr_extra17(cdrExtra17);
-			cdr.setCdr_extra18(cdrExtra18);
-			cdr.setCdr_extra19(" ");
-			cdr.setCdr_mvno_name(cdr_mvno_name);
-			log.debug("Write CDR " + cdr);
-			return cdr;
-		} else
+				cdr.setCdr_date(cdrDate);
+				cdr.setCdr_time(cdrTime);
+				cdr.setCdr_duration(cdrDuration);
+				cdr.setCdr_in_route(cdrInRoute);
+				cdr.setCdr_out_route(cdrOutRoute);
+				cdr.setCdr_a_no(cdrANo);
+				cdr.setCdr_b_no(cdrBNo);
+				cdr.setCdr_bearer_service(cdrBearerService);
+				cdr.setCdr_extra9(cdrExtra9);
+				cdr.setCdr_extra10(" ");
+				cdr.setCdr_extra11(" ");
+				cdr.setCdr_extra12(cdrExtra12);
+				cdr.setCdr_extra13(cdrExtra13);
+				cdr.setCdr_extra14(cdrExtra14);
+				cdr.setCdr_extra15(cdrExtra15);
+				cdr.setCdr_extra16(" ");
+				cdr.setCdr_extra17(cdrExtra17);
+				cdr.setCdr_extra18(cdrExtra18);
+				cdr.setCdr_extra19(" ");
+				cdr.setCdr_mvno_name(cdr_mvno_name);
+				log.debug("Write CDR " + cdr);
+				return cdr;
+			} else {
+				log.debug("SKIP CDR CASE 1 " + cdr);
+				return null;
+			}
+		} else {
+			log.debug("SKIP CDR CASE 2 " + cdr);
 			return null;
+		}
 	}
 
 	private String map_mvno(final String cdrANoGroup,
@@ -112,12 +121,17 @@ public class CDRItemProcessor implements ItemProcessor<CDR, CDR> {
 			if (source1.contains("RMV") || source2.contains("RMV")) {
 				mvno_name = "RMV";
 			} else
-				mvno_name = "CASE1 cdrANoGroup=["+cdrANoGroup+"] cdrBnoGroup=["+cdrBnoGroup+"] source1=["+source1+"] source2=["+source2+"]";
+				mvno_name = "CASE1 cdrANoGroup=[" + cdrANoGroup
+						+ "] cdrBnoGroup=[" + cdrBnoGroup + "] source1=["
+						+ source1 + "] source2=[" + source2 + "]";
 
 		} else {
-			mvno_name = "CASE2 cdrANoGroup=["+cdrANoGroup+"] cdrBnoGroup=["+cdrBnoGroup+"] source1=["+source1+"] source2=["+source2+"]";;
+			mvno_name = "CASE2 cdrANoGroup=[" + cdrANoGroup + "] cdrBnoGroup=["
+					+ cdrBnoGroup + "] source1=[" + source1 + "] source2=["
+					+ source2 + "]";
+			;
 		}
-		log.debug("MVNO NAME: ["+ mvno_name +"]");
+		log.debug("MVNO NAME: [" + mvno_name + "]");
 		return mvno_name;
 		// return cdrANoGroup + "->" + cdrInRouteDesc + "->" + cdrOutRouteDesc
 		// + "->" + cdrBnoGroup;
@@ -155,7 +169,8 @@ public class CDRItemProcessor implements ItemProcessor<CDR, CDR> {
 			service = "MMS";
 		} else
 			service = "VOI";
-		log.debug("ORIGINAL SERVICE=" + cdr_bearer_service + " NEW SERVICE="+service);
+		log.debug("ORIGINAL SERVICE=" + cdr_bearer_service + " NEW SERVICE="
+				+ service);
 		return service;
 	}
 
