@@ -11,7 +11,8 @@
 	<context:property-placeholder
 		location="classpath:/spring/config/batch_mvno.properties,
 					classpath:/spring/config/jdbc.properties" 
-		ignore-unresolvable="true"/>
+		ignore-unresolvable="true"
+		system-properties-mode="ENVIRONMENT"/>
 
 <!-- 	<bean id="dataSource" class="oracle.jdbc.pool.OracleDataSource" -->
 <!-- 		destroy-method="close"> -->
