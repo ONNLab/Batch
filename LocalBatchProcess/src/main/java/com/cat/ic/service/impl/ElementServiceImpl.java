@@ -17,6 +17,31 @@ public class ElementServiceImpl implements IElementService {
 	private IElementDAO elementDAO;
 	private final Logger log = LoggerFactory.getLogger(ElementServiceImpl.class);
 
+	public void initialize () throws Exception {
+		log.info("load data 6680 to cache");
+		elementDAO.getPartialElement6680();
+		log.info("load data 6681 to cache");
+		elementDAO.getPartialElement6681();
+		log.info("load data 6682 to cache");
+		elementDAO.getPartialElement6682();
+		log.info("load data 6683 to cache");
+		elementDAO.getPartialElement6683();
+		log.info("load data 6684 to cache");
+		elementDAO.getPartialElement6684();
+		log.info("load data 6685 to cache");
+		elementDAO.getPartialElement6685();
+		log.info("load data 6686 to cache");
+		elementDAO.getPartialElement6686();
+		log.info("load data 6687 to cache");
+		elementDAO.getPartialElement6687();
+		log.info("load data 6688 to cache");
+		elementDAO.getPartialElement6688();
+		log.info("load data 6689 to cache");
+		elementDAO.getPartialElement6689();
+		log.info("load data all other to cache");
+		elementDAO.getPartialElement();
+	}
+	
 	public void setElementDAO(IElementDAO elementDAO) {
 		this.elementDAO = elementDAO;
 	}

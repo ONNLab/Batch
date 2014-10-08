@@ -79,7 +79,7 @@
 		<property name="routeDAO" ref="routeDAO" />
 	</bean>
 
-	<bean id="elementService" class="com.cat.ic.service.impl.ElementServiceImpl">
+	<bean id="elementService" class="com.cat.ic.service.impl.ElementServiceImpl" init-method="initialize">
 		<property name="elementDAO" ref="elementDAO" />
 	</bean>
 
