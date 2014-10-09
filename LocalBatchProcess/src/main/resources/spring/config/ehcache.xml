@@ -10,27 +10,27 @@
 		<persistence strategy="localTempSwap" />
 	</defaultCache>
 	<cache name="elements" maxElementsInMemory="70000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6680" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6681" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6682" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6683" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6684" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6685" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6686" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6687" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6688" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="elements6689" maxElementsInMemory="10000" eternal="true"
-		overflowToDisk="true" diskPersistent="false"/>
+		overflowToDisk="false" diskPersistent="false"/>
 	<cache name="element" maxElementsInMemory="1000" eternal="true"
 		overflowToDisk="true" diskPersistent="false"/>
 	<cache name="route" maxElementsInMemory="1000" eternal="true"
