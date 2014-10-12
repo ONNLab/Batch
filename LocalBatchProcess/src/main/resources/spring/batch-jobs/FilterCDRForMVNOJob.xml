@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
 	<import resource="../config/luanch-context.xml" />
-	<import resource="../config/MVNOBeanFactory.xml"/>
+	<import resource="../config/MVNOBeanFactory.xml" />
 	<import resource="../config/cacheManager.xml" />
 
 	<job id="filterCDRForMVNOJob" xmlns="http://www.springframework.org/schema/batch"
@@ -15,7 +15,8 @@
 		<!-- <tasklet ref="copyFilesTasklet"/> -->
 		<!-- <next on="COMPLETED" to="step-Master"/> -->
 		<!-- </step> -->
-		<step id="step-Master-of-filterCDRForMVNO" allow-start-if-complete="true">
+		<step id="step-Master-of-filterCDRForMVNO"
+			allow-start-if-complete="true">
 			<partition step="step-Slave-filterCDRForMVNO" partitioner="partitioner">
 				<handler grid-size="${partition.grid-size}" task-executor="taskExecutor" />
 			</partition>
@@ -29,7 +30,8 @@
 	<step id="step-Slave-filterCDRForMVNO" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet transaction-manager="transactionManager">
 			<chunk writer="itemWriter" reader="itemReader" processor="itemProcessor"
-				commit-interval="${chunk.commit-interval}" retry-policy="retryPolicy" />
+				commit-interval="${chunk.commit-interval}" retry-policy="retryPolicy" 
+				retry-limit="30"/>
 			<listeners>
 				<listener ref="fileNameListener" />
 				<listener ref="chunkListener" />
@@ -50,8 +52,15 @@
 						<property name="initialInterval" value="100" />
 					</bean>
 				</entry>
+				<entry key="java.lang.NullPointerException">
+					<bean class="org.springframework.retry.policy.SimpleRetryPolicy"
+						scope="step">
+						<property name="maxAttempts" value="15" />
+						<property name="initialInterval" value="100" />
+					</bean>
+				</entry>
 			</map>
 		</property>
 	</bean>
-	
+
 </beans>

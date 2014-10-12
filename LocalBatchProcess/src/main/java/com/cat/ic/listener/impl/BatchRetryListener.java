@@ -13,6 +13,6 @@ public class BatchRetryListener extends RetryListenerSupport {
 	@Override
 	public <T, E extends Throwable> void onError(RetryContext context,
 			RetryCallback<T, E> callback, Throwable throwable) {
-		 LOG.info("retried operation",throwable);
+		 LOG.info("retried operation :",throwable);
 	}
 }
