@@ -132,10 +132,8 @@ public class ElementInfo extends JdbcDaoSupport implements IElementDAO{
 							sql,
 							new Object[] {
 									number,
-									new SimpleDateFormat("yyyyMMdd")
-											.parse(cdrDate),
-									new SimpleDateFormat("yyyyMMdd")
-											.parse(cdrDate) },
+									cdrDate,
+									cdrDate },
 							new int[] { Types.VARCHAR, Types.TIMESTAMP,
 									Types.TIMESTAMP }, new ElementMapper());
 			return element;

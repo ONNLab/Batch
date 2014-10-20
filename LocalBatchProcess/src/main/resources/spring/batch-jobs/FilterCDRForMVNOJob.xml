@@ -30,8 +30,7 @@
 	<step id="step-Slave-filterCDRForMVNO" xmlns="http://www.springframework.org/schema/batch">
 		<tasklet transaction-manager="transactionManager">
 			<chunk writer="itemWriter" reader="itemReader" processor="itemProcessor"
-				commit-interval="${chunk.commit-interval}" retry-policy="retryPolicy" 
-				retry-limit="30"/>
+				commit-interval="${chunk.commit-interval}" retry-policy="retryPolicy" />
 			<listeners>
 				<listener ref="fileNameListener" />
 				<listener ref="chunkListener" />
